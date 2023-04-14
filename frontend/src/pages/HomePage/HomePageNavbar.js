@@ -195,7 +195,7 @@ const HomePageNavbar = () => {
               ))}
             </Menu> */}
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
-              <Link href="/login">
+              <Link href="/login" sx={{textDecoration:'none'}}>
                 <Button
                   sx={{
                     border: 1,

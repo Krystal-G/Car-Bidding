@@ -17,6 +17,7 @@ import CorporateAccountAuth from "./pages/CorporateAccountAuth";
 import CorporateAccountsLandingPage from "./pages/CorporateAccounts/CorporateAccountsLandingPage.js";
 import CorporateAdmin from "./pages/CorporateAdmin.js";
 import HomePage from "./pages/HomePage/HomePage.js";
+import Profile from "./pages/Profile";
 
 function App() {
   // const {} = React.useContext(MainContext);
@@ -29,6 +30,7 @@ function App() {
         <Route path="/corpacauth" element={<CorporateAccountAuth />} />
         <Route path="/corpadmin" element={<CorporateAdmin />} />
         <Route path="/userinfo" element={<UserInfo />} />
+        <Route path="/profile" element={<Profile/>}/>
       </Routes>
     </Router>
   );

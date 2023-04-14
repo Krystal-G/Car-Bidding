@@ -41,7 +41,7 @@ const CorporateAccountsLandingPage = () => {
             Corporate Accounts
           </Typography>
           <Box sx={{ display: "flex", mb: "30px" }}>
-            <Link href="/corpacauth">
+            <Link href="/corpacauth" sx={{textDecoration:'none'}}>
               <Button
                 sx={{
                   mr: "20px",
@@ -62,7 +62,7 @@ const CorporateAccountsLandingPage = () => {
                 Join Organization
               </Button>
             </Link>
-            <Link href="/corpacauth">
+            <Link href="/corpacauth" sx={{textDecoration:'none'}}>
               <Button
                 sx={{
                   fontFamily: "inherit",

@@ -17,7 +17,7 @@ import AdbIcon from "@mui/icons-material/Adb";
 const pages = ["Features", "Home Page", "Driver Page", "Oraganization Page"];
 const settings = [
   {
-    link: "/profie",
+    link: "/profile",
     name: "Profile",
   },
   {
