@@ -18,7 +18,9 @@ exports.joinDriverToOrganization = async (req, res, next) => {
     if (!driver) {
       return res.status(404).json({ error: 'Driver not found' });
     }
-
+    if (organization.drivers.includes(driverId)) {
+      return res.status(400).json({ message: "Driver already joined to this organization" });
+    }
     // Add driver to organization's driver list
     organization.drivers.push(driver._id);
 
@@ -56,7 +58,9 @@ exports.joinUserToOrganization = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
+    if (organization.employees.includes(userId)) {
+      return res.status(400).json({ message: "User already joined to this organization" });
+    }
     // Add user to organization's employee list
     organization.employees.push(user);
 
@@ -64,7 +68,7 @@ exports.joinUserToOrganization = async (req, res, next) => {
     await organization.save();
 
     // Add organization to user's organization list
-    user.organizations.push(organization);
+    user.organization = organization;
 
     // Save user to database
     await user.save();
@@ -97,45 +101,48 @@ exports.getOrganizationById = async (req, res, next) => {
 };
 
 // POST /api/organizations/create
-exports.createOrganization = async (req, res, next) => {
+exports.createOrganization = async (req, res) => {
   const { userId, organizationName, organizationDescription, organizationAddress } = req.body;
 
   try {
-    // Find user by ID
     const user = await User.findById(userId);
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Create new organization
-    const organization = new Organization({
+    const newOrg = new Organization({
+      admin: userId,
       name: organizationName,
       description: organizationDescription,
       address: organizationAddress,
-      admin: user
+      employees: [userId]
     });
 
-    // Update user's organization and isAdmin fields
-    user.organization = organization;
+    await newOrg.save();
+
+    user.organizations = newOrg;
     user.isAdmin = true;
+    await user.save();
 
-    // Save changes to user and organization
-    await Promise.all([user.save(), organization.save()]);
+    const populatedOrg = await Organization.findById(newOrg._id).populate('admin');
+    // Populate admin field with the actual User document
 
-    // Return success response with user and organization IDs
-    res.status(201).json({
+    res.json({
       userId: user._id,
-      organizationId: organization._id,
-      name: organization.name,
-      description: organization.description,
-      address: organization.address,
-      admin: organization.admin
+      organizationId: newOrg._id,
+      name: newOrg.name,
+      description: newOrg.description,
+      address: newOrg.address,
+      admin: populatedOrg.admin,
+      employees: newOrg.employees
     });
   } catch (error) {
-    // Handle errors
-    next(error);
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // GET /api/users/:id
 exports.getUser = async (req, res, next) => {
@@ -170,7 +177,7 @@ exports.getOrganizations = async (req, res, next) => {
     const organizations = await Organization.find();
 
     // Return organizations information
-    res.json(organizations);
+    res.json({organizations});
   } catch (error) {
     // Handle errors
     next(error);

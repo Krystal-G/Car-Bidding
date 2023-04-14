@@ -1,7 +1,7 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Driver = require('../modal/driver');
-const Passenger = require('../modal/passenger');
+const User = require('../modal/user');
 
 // Signup function for drivers
 exports.driverSignup = async (req, res) => {
@@ -32,15 +32,11 @@ exports.driverSignup = async (req, res) => {
     const savedDriver = await newDriver.save();
 
     // Create JWT token
-    const token = jwt.sign({ userId: savedDriver._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    const token = jwt.sign({ email: savedDriver.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
     // Send response with user info and token
     res.status(201).json({
-      message: 'Driver created successfully',
-      userId: savedDriver._id,
-      name: savedDriver.name,
-      email: savedDriver.email,
-      car: savedDriver.car,
+      savedDriver,
       token
     });
   } catch (error) {
@@ -51,9 +47,9 @@ exports.driverSignup = async (req, res) => {
 // Signup function for passengers
 exports.passengerSignup = async (req, res) => {
   const { name, email, password, aadharNo, phoneNo} = req.body;
-
+    
   // Check if user with the same email exists
-  const existingUser = await Passenger.findOne({ email });
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(409).json({ error: 'Email already exists' });
   }
@@ -62,7 +58,7 @@ exports.passengerSignup = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create new passenger object
-  const newPassenger = new Passenger({
+  const newPassenger = new User({
     name,
     email,
     password: hashedPassword,
@@ -72,17 +68,16 @@ exports.passengerSignup = async (req, res) => {
 
   // Save the passenger to the database
   try {
+    console.log(1);
     const savedPassenger = await newPassenger.save();
 
+    console.log(2);
     // Create JWT token
-    const token = jwt.sign({ userId: savedPassenger._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-
+    const token = jwt.sign({ email: savedPassenger.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    console.log(3);
     // Send response with user info and token
     res.status(201).json({
-      message: 'Passenger created successfully',
-      userId: savedPassenger._id,
-      name: savedPassenger.name,
-      email: savedPassenger.email,
+      savedPassenger,
       token
     });
   } catch (error) {
@@ -95,7 +90,7 @@ exports.login = async (req, res) => {
   
     // Check if user with the email exists in either the Driver or Passenger collection
     const driver = await Driver.findOne({ email });
-    const passenger = await Passenger.findOne({ email });
+    const passenger = await User.findOne({ email });
   
     // If user with the email doesn't exist, return error
     if (!driver && !passenger) {

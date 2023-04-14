@@ -22,6 +22,12 @@ const organizationSchema = new mongoose.Schema({
       ref: "Ride",
     },
   ],
+  drivers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Driver"
+    }
+  ]
 });
 
 module.exports = mongoose.model("Organization", organizationSchema);
