@@ -14,7 +14,7 @@ router.get("/api/organizations/:id",getOrganizationById);
 
 
 
-router.post("/api/organizations/:id/assignRides",getRides);
+router.post("/api/organizations/:id/assignRides",assignRides);
 router.get("/api/organizations/:id/getRides",getRides);
 
 router.get("/api/organizations/", getOrganizations);

@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
   },
+  pickupLocation : {
+    type: String,
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);
