@@ -71,8 +71,9 @@ exports.joinUserToOrganization = async (req, res, next) => {
     user.organization = organization;
 
     // Save user to database
+    console.log(user);
     await user.save();
-
+    console.log(user);
     // Return success response
     res.status(201).json({ message: 'User added to organization' });
   } catch (error) {

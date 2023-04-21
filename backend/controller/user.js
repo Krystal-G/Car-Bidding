@@ -5,7 +5,7 @@ const User = require('../modal/user');
 
 // Signup function for drivers
 exports.driverSignup = async (req, res) => {
-  const { name, email, password, phoneNo, licensePlate, rcNo, carModel } = req.body;
+  const { name, email, password, aadharNo ,phoneNo, licensePlate, rcNo, carModel } = req.body;
 
   // Check if user with the same email exists
   const existingUser = await Driver.findOne({ email });
@@ -21,6 +21,7 @@ exports.driverSignup = async (req, res) => {
     name,
     email,
     password: hashedPassword,
+    aadharNo,
     phoneNo,
     licensePlate,
     rcNo,
@@ -47,7 +48,6 @@ exports.driverSignup = async (req, res) => {
 // Signup function for passengers
 exports.passengerSignup = async (req, res) => {
   const { name, email, password, aadharNo, phoneNo} = req.body;
-    
   // Check if user with the same email exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -65,12 +65,12 @@ exports.passengerSignup = async (req, res) => {
     aadharNo,
     phoneNo
   });
-
+  console.log(newPassenger);
   // Save the passenger to the database
   try {
     console.log(1);
     const savedPassenger = await newPassenger.save();
-
+    
     console.log(2);
     // Create JWT token
     const token = jwt.sign({ email: savedPassenger.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
@@ -104,7 +104,8 @@ exports.login = async (req, res) => {
     } else {
       user = passenger;
     }
-  
+    console.log("user",user);
+    console.log("user",user._id);
     const isPasswordMatch = await bcrypt.compare(password, user.password);
   
     if (!isPasswordMatch) {
@@ -112,14 +113,11 @@ exports.login = async (req, res) => {
     }
   
     // Create JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
-  
+    const token = jwt.sign({ email:user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
     // Send response with user info and token
     res.status(200).json({
       message: 'Login successful',
-      userId: user._id,
-      name: user.name,
-      email: user.email,
+      user,
       role: driver ? 'driver' : 'passenger',
       token
     });
