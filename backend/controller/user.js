@@ -5,11 +5,12 @@ const User = require('../modal/user');
 
 // Signup function for drivers
 exports.driverSignup = async (req, res) => {
-  const { name, email, password, phoneNo, licensePlate, rcNo, carModel } = req.body;
+  const { name, email, password, phoneNo, licensePlate, aadharNo,rcNo, carModel } = req.body;
 
   // Check if user with the same email exists
-  const existingUser = await Driver.findOne({ email });
-  if (existingUser) {
+  const existingDriver = await Driver.findOne({ email });
+  const existingUser = await User.findOne({ email });
+  if (existingDriver || existingUser) {
     return res.status(409).json({ error: 'Email already exists' });
   }
 
@@ -24,6 +25,7 @@ exports.driverSignup = async (req, res) => {
     phoneNo,
     licensePlate,
     rcNo,
+    aadharNo,
     carModel
   });
 
@@ -49,8 +51,8 @@ exports.passengerSignup = async (req, res) => {
   const { name, email, password, aadharNo, phoneNo} = req.body;
     
   // Check if user with the same email exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
+  const existingDriver = await User.findOne({ email });
+  if (existingDriver) {
     return res.status(409).json({ error: 'Email already exists' });
   }
 
@@ -68,13 +70,12 @@ exports.passengerSignup = async (req, res) => {
 
   // Save the passenger to the database
   try {
-    console.log(1);
     const savedPassenger = await newPassenger.save();
 
-    console.log(2);
+
     // Create JWT token
     const token = jwt.sign({ email: savedPassenger.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    console.log(3);
+
     // Send response with user info and token
     res.status(201).json({
       savedPassenger,

@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const rideSchema = new mongoose.Schema({
   driver: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Driver",
+    default: null,
   },
   organization: {
     type: mongoose.Schema.Types.ObjectId,

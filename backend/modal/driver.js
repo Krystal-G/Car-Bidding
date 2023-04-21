@@ -26,6 +26,11 @@ const driverSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  aadharNo : {
+    type: String,
+    required: true,
+    unique: true,
+  },
   carModel: {
     type: String,
     required: true,
@@ -36,6 +41,12 @@ const driverSchema = new mongoose.Schema({
       ref: "Organization",
     },
   ],
+  ridesAssigned: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Ride",
+    }
+  ]
 });
 
 module.exports = mongoose.model("Driver", driverSchema);

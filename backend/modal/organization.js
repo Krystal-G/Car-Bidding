@@ -10,6 +10,12 @@ const organizationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  minStartTime : {
+    type: String,
+  },
+  orgTime :{
+    type: String,
+  },
   employees: [
     {
       type: mongoose.Schema.Types.ObjectId,

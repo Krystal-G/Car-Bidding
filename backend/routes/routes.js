@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const {driverSignup,passengerSignup,login} = require("../controller/user");
-const {joinDriverToOrganization, getRides,getOrganizationById ,joinUserToOrganization,getOrganizations, createOrganization} = require("../controller/organizations");
+const {joinDriverToOrganization, getRides,getOrganizationById ,joinUserToOrganization,getOrganizations, createOrganization, assignRides} = require("../controller/organizations");
+const auth = require("../middleware/auth");
 
 router.route("/api/auth/signup/driver").post(driverSignup);
 router.route("/api/auth/signup/user").post(passengerSignup);
@@ -9,7 +10,7 @@ router.post("/api/auth/login", login);
 
 router.post("/api/organizations/join/driver",joinDriverToOrganization);
 router.post("/api/organizations/join/user",joinUserToOrganization);
-router.post("/api/organizations/create", createOrganization);
+router.post("/api/organizations/create",createOrganization);
 router.get("/api/organizations/:id",getOrganizationById);
 
 

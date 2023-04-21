@@ -30,9 +30,17 @@ const userSchema = new mongoose.Schema({
   },
   isAdmin: {
     type: Boolean,
+    default: false
   },
-  pickupLocation : {
+  pickupLocation: {
     type: String,
+  },
+  pickupTime: {
+    type: String,
+  },
+  rideAssigned: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref : "Ride"
   }
 });
 
