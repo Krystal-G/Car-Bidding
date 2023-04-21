@@ -62,7 +62,7 @@ const CorporateAccountsLandingPage = () => {
                 Join Organization
               </Button>
             </Link>
-            <Link href="/corpacauth" sx={{textDecoration:'none'}}>
+            <Link href="/createorg" sx={{textDecoration:'none'}}>
               <Button
                 sx={{
                   fontFamily: "inherit",

@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { CurrentLoggedInUser } from "../../context/MainContext";
 
 const pages = ["Features", "Home Page", "Driver Page", "Oraganization Page"];
 const settings = [
@@ -25,7 +26,7 @@ const settings = [
     name: "Dashboard",
   },
   {
-    link: "/logout",
+    link: "/",
     name: "Logout",
   },
 ];
@@ -45,10 +46,16 @@ const NavBar = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (e) => {
+    if(e.name==="Logout")
+    {
+      console.log(CurrentLoggedInUser);
+      CurrentLoggedInUser = null;
+      console.log(CurrentLoggedInUser);
+    }
     setAnchorElUser(null);
   };
-
+  
   return (
     <AppBar
       position="fixed"
@@ -183,7 +190,10 @@ const NavBar = () => {
                   href={setting.link}
                   sx={{ textDecoration: "none", color: "black" }}
                 >
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem key={setting}  onClick={() =>
+                  {
+                    handleCloseUserMenu(setting)
+                  }}>
                     <Typography textAlign="center">{setting.name}</Typography>
                   </MenuItem>
                 </Link>

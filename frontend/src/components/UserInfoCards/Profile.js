@@ -5,6 +5,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import { CurrentLoggedInUser } from "../../context/MainContext";
 const Profile = () => {
   return (
     <Container
@@ -49,7 +50,7 @@ const Profile = () => {
             variant="h6"
             sx={{ display: "inline-block", marginLeft: "10px" }}
           >
-            Manas Agarwal
+            {CurrentLoggedInUser?.name}
           </Typography>
 
           <Typography

@@ -2,6 +2,10 @@ const Organization = require('../modal/organization');
 const Driver = require('../modal/driver');
 const User = require('../modal/user');
 const Ride = require('../modal/ride');
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
+const {main} = require("../mapAlgo/main");
 
 // POST /api/organizations/join/driver
 exports.joinDriverToOrganization = async (req, res, next) => {
@@ -44,7 +48,7 @@ exports.joinDriverToOrganization = async (req, res, next) => {
 
 // POST /api/organizations/join
 exports.joinUserToOrganization = async (req, res, next) => {
-  const { userId, orgId } = req.body;
+  const { userId, orgId, location } = req.body;
 
   try {
     // Find organization by ID
@@ -62,6 +66,9 @@ exports.joinUserToOrganization = async (req, res, next) => {
       return res.status(400).json({ message: "User already joined to this organization" });
     }
     // Add user to organization's employee list
+    user.pickupLocation = location
+    await user.save();
+
     organization.employees.push(user);
 
     // Save changes to organization
@@ -103,7 +110,7 @@ exports.getOrganizationById = async (req, res, next) => {
 
 // POST /api/organizations/create
 exports.createOrganization = async (req, res) => {
-  const { userId, organizationName, organizationDescription, organizationAddress } = req.body;
+  const { userId, organizationName, organizationDescription, organizationAddress,orgTime } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -117,12 +124,14 @@ exports.createOrganization = async (req, res) => {
       name: organizationName,
       description: organizationDescription,
       address: organizationAddress,
-      employees: [userId]
+      employees: [userId],
+      orgTime: orgTime,
+      minStartTime: orgTime,
     });
 
     await newOrg.save();
 
-    user.organizations = newOrg;
+    user.organization = newOrg;
     user.isAdmin = true;
     await user.save();
 
@@ -136,7 +145,8 @@ exports.createOrganization = async (req, res) => {
       description: newOrg.description,
       address: newOrg.address,
       admin: populatedOrg.admin,
-      employees: newOrg.employees
+      employees: newOrg.employees,
+      orgTime: newOrg.orgTime
     });
   } catch (error) {
     console.error(error);
@@ -178,7 +188,7 @@ exports.getOrganizations = async (req, res, next) => {
     const organizations = await Organization.find();
 
     // Return organizations information
-    res.json({organizations});
+    res.json({ organizations });
   } catch (error) {
     // Handle errors
     next(error);
@@ -201,6 +211,86 @@ exports.getRides = async (req, res, next) => {
   }
 };
 
-
+exports.assignRides = async (req, res, next) => {
+  try {
+    const { adminId } = req.body;
+    const admin = await User.findById(adminId);
+    if (!admin || !admin.isAdmin) {
+      return res.status(400).json({ message: 'Invalid admin ID' });
+    }
+    // console.log(1);
+    const organization = await Organization.findOne({ _id: admin.organization });
+    if (!organization) {
+      return res.status(400).json({ message: 'No organization found for the given admin ID' });
+    }
+    //delete all rides in current organization ride array
+    await Ride.deleteMany({ organization: organization._id });
+    organization.rides = [];
+    await organization.save();
+    const tempEmployees = await Promise.all(organization.employees.map(async (employeeId) => {
+      const employee = await User.findById(employeeId);
+      return {
+        id: employeeId,
+        isAdmin: employee.isAdmin,
+        location: employee.pickupLocation,
+      };
+    }));
+    const employees = tempEmployees.filter((employee) => !employee.isAdmin);
+    const drivers = await Promise.all(organization.drivers.map(async (driverId) => {
+      const driver = await Driver.findById(driverId);
+      return {
+        id: driverId,
+      };
+    }));
+    // console.log(employees);
+    const result = main(employees,drivers,organization.orgTime);
+    let minTime = parseInt(organization.orgTime.split(':')[0])*60 + parseInt(organization.orgTime.split(':')[1]);
+    for (let i = 0; i < result.length; i++) {
+      //find passenger by id and change pickup time
+      for (let j = 0; j < result[i].passengers.length; j++) {
+        // console.log(result[i].passengers[j].id);
+        const passenger = await User.findById(result[i].passengers[j].id);
+        passenger.pickupTime = result[i].passengers[j].time;
+        await passenger.save();
+      }
+      // console.log(result[i].driver);
+      // const driver = await Driver.findById(result[i].driver);
+      // console.log(driver);
+      const ride = new Ride({
+        driver: result[i].driver,
+        passengers: result[i].passengers.map((passenger) => passenger.id),
+        organization: organization._id, 
+      });
+      if(ride.driver === null){
+        console.log(result[i].passengers[0].time);
+        const curTime = parseInt(result[i].passengers[0].time.split(':')[0])*60 + parseInt(result[i].passengers[0].time.split(':')[1]);
+        minTime = Math.min(minTime,curTime);
+      }
+      // console.log(ride);
+      await ride.save();
+      organization.rides.push(ride._id);
+      await organization.save();
+      for (let j = 0; j < result[i].passengers.length; j++) {
+        // console.log(result[i].passengers[j].id);
+        const passenger = await User.findById(result[i].passengers[j].id);
+        passenger.rideAssigned = ride._id;
+        await passenger.save();
+      }
+      if(result[i].driver !== null){
+        const driver = await Driver.findById(result[i].driver);
+        driver.ridesAssigned.push(ride._id);
+        await driver.save();
+      }
+    }
+    //convert minTime to string HH:MM format
+    let timeString = (Math.floor(minTime/60)).toString().padStart(2, '0') + ":" + (minTime%60).toString().padStart(2, '0'); 
+    organization.minStartTime = timeString;
+    await organization.save();
+    return res.status(200).json({ message: 'Rides assigned successfully' , rides : organization.rides});
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
 
 

@@ -8,8 +8,6 @@ import ReCard from './ReCard';
 const orgInfo = {
   Name: "Indian Institute of Information Techonolgy Lucknow",
   Address: "IIITL",
-  email: "lcs2020021@iiitl.ac.in",
-  phone: "1234567890",
   organizationId:"1234567890"
 }
 const OrganisationInfo = () => {
@@ -20,10 +18,7 @@ const OrganisationInfo = () => {
       <CardContent>
         <Text first="Name" second={orgInfo.Name} />
         <Text first="Address" second={orgInfo.Address} />
-        <Text first="Email" second={orgInfo.email} />
-        <Text first="Phone" second={orgInfo.phone} />
         <Text first="Organization Id" second={orgInfo.organizationId} />
-
       </CardContent>
     </ReCard>
   );

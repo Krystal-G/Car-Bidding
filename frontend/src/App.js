@@ -18,6 +18,8 @@ import CorporateAccountsLandingPage from "./pages/CorporateAccounts/CorporateAcc
 import CorporateAdmin from "./pages/CorporateAdmin.js";
 import HomePage from "./pages/HomePage/HomePage.js";
 import Profile from "./pages/Profile";
+import CreateOrg from "./components/Corporate/CreateOrg";
+import CorporateAccountAuthForCreate from "./pages/CorporateAccountAuthForCreate";
 
 function App() {
   // const {} = React.useContext(MainContext);
@@ -31,6 +33,7 @@ function App() {
         <Route path="/corpadmin" element={<CorporateAdmin />} />
         <Route path="/userinfo" element={<UserInfo />} />
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/createorg" element={<CorporateAccountAuthForCreate/>}/>
       </Routes>
     </Router>
   );

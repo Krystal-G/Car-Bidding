@@ -1,7 +1,19 @@
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
-
+import { useState } from "react";
+import { MainState } from "../../context/MainContext";
 const Login = ({ setIsLogin }) => {
-  const handleSubmit = () => {};
+  const [email,setEmail] =  useState("");
+  const [password,setPassword] =  useState("");
+  const {userLogin}  = MainState();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    userLogin({
+      email:email,
+      password:password
+    })
+    setEmail("");
+    setPassword("");
+  };
   return (
     <>
       <Box
@@ -42,6 +54,8 @@ const Login = ({ setIsLogin }) => {
                   name="email"
                   type="email"
                   variant="filled"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
                   fullWidth
@@ -49,6 +63,8 @@ const Login = ({ setIsLogin }) => {
                   name="password"
                   type="password"
                   variant="filled"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </Stack>
               <Button

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import ListOfOrgs from "./ListOfOrgs";
 import {
   Box,
   Button,
@@ -8,9 +9,22 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { MainState } from "../../context/MainContext";
 const Join = () => {
-  const handleSubmit = () => {};
-  const [method, setMethod] = useState("admin");
+  const [userId,setuserId] = useState("");
+  const [orgId,setOrgId] = useState("");
+  const {joinUserToOrg,joinDriverToOrg} = MainState();
+  const handleSubmitOfDriver = () => {};
+  const handleSubmitOfEmployee = (e) => {
+    e.preventDefault();
+    joinUserToOrg({
+      userId:userId,
+      orgId:orgId
+    })
+    setuserId("");
+    setOrgId("");
+  };
+  const [method, setMethod] = useState("driver");
   const handleMethodChange = useCallback((event, value) => {
     setMethod(value);
   }, []);
@@ -38,42 +52,14 @@ const Join = () => {
               <Typography variant="h4">Corporate Accounts</Typography>
             </Stack>
             <Tabs onChange={handleMethodChange} sx={{ mb: 3 }} value={method}>
-              <Tab label="admin" value="admin" />
+              <Tab label="driver" value="driver" />
               <Tab label="employee" value="employee" />
             </Tabs>
-            {method === "admin" && (
-              <form noValidate onSubmit={handleSubmit}>
-                <Stack spacing={3}>
-                  <TextField
-                    fullWidth
-                    variant="filled"
-                    label="Organization Name"
-                    name="orgName"
-                    type="string"
-                  />
-                  <TextField
-                    fullWidth
-                    variant="filled"
-                    label="Organization Address"
-                    name="orgAddress"
-                    type="string"
-                  />
-
-                </Stack>
-
-                <Button
-                  fullWidth
-                  size="large"
-                  sx={{ mt: 3, backgroundColor:'#8330c2'}}
-                  type="submit"
-                  variant="contained"
-                >
-                  Continue
-                </Button>
-              </form>
+            {method === "driver" && (
+              <ListOfOrgs/>
             )}
             {method === "employee" && (
-              <form noValidate onSubmit={handleSubmit}>
+              <form noValidate onSubmit={handleSubmitOfEmployee}>
                 <Stack spacing={3}>
                   <TextField
                     fullWidth
@@ -81,9 +67,19 @@ const Join = () => {
                     label="organization ID"
                     name="orgID"
                     type="string"
+                    value={orgId}
+                    onChange={(e) => setOrgId(e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    variant="filled"
+                    label="Employee ID"
+                    name="userId"
+                    type="string"
+                    value={userId}
+                    onChange={(e) =>setuserId(e.target.value)}
                   />
                 </Stack>
-
                 <Button
                   fullWidth
                   size="large"

@@ -9,13 +9,11 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
+import { CurrentLoggedInUser } from "../../context/MainContext";
 
 const user = {
   avatar: "/assets/avatars/avatar-anika-visser.png",
-  city: "Los Angeles",
-  country: "USA",
-  jobTitle: "Senior Developer",
-  name: "Anika Visser",
+  name: CurrentLoggedInUser?.name,
   timezone: "GTM-7",
 };
 const AccountProfile = () => {
