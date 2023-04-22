@@ -1,6 +1,8 @@
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { MainState } from "../../context/MainContext";
+import React from "react";
+
 const Login = ({ setIsLogin }) => {
   const [email,setEmail] =  useState("");
   const [password,setPassword] =  useState("");

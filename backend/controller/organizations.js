@@ -93,10 +93,10 @@ exports.joinUserToOrganization = async (req, res, next) => {
 // GET /api/organizations/:id
 exports.getOrganizationById = async (req, res, next) => {
   const { id } = req.params;
-
+  console.log(id);
   try {
     // Find organization by ID
-    const organization = await Organization.findById(id);
+    const organization = await Organization.findById(new ObjectId(id));
     if (!organization) {
       return res.status(404).json({ error: 'Organization not found' });
     }
@@ -199,14 +199,21 @@ exports.getOrganizations = async (req, res, next) => {
 
 exports.getRides = async (req, res, next) => {
   const organizationId = req.params.id;
-
+  // console.log(organizationId);
   try {
-    const rides = await Ride.find({ organization: organizationId })
-      .populate('driver')
-      .populate('organization')
-      .populate('passengers');
-
-    res.status(200).json({ rides });
+    const organization = await Organization.findById(organizationId);
+    if(!organization) {
+      return res.status(404).json({ message: 'Organization not found' });
+    }
+    const rides = organization.rides;
+    const result = [];
+    //iterate through rides array and find the ride details
+    for (let i = 0; i < rides.length; i++) {
+      const ride = await Ride.findById(rides[i]);
+      result.push(ride);
+    }
+    console.log(result);
+    res.status(200).json({ result });
   } catch (error) {
     next(error);
   }
@@ -228,6 +235,15 @@ exports.assignRides = async (req, res, next) => {
     await Ride.deleteMany({ organization: organization._id });
     organization.rides = [];
     await organization.save();
+    for(let i=0;i<organization.employees.length;i++){
+      await User.updateOne({ _id: organization.employees[i] }, { $unset: { rideAssigned: '' } });
+    }
+    for(let i=0;i<organization.drivers.length;i++){
+      // const driver = await Driver.findById(organization.drivers[i]);
+      // driver.ridesAssigned = [];
+      // await driver.save();
+      await Driver.findOneAndUpdate({ _id: organization.drivers[i] }, { $set: { ridesAssigned: [] } });
+    }
     const tempEmployees = await Promise.all(organization.employees.map(async (employeeId) => {
       const employee = await User.findById(employeeId);
       return {
@@ -294,4 +310,44 @@ exports.assignRides = async (req, res, next) => {
   }
 }
 
+exports.getDrivers = async (req, res, next) => {
+  const id = req.params.id;
+  // console.log(id);
+  try {
+    const organization = await Organization.findById(id);
+    if(!organization) {
+      return res.status(404).json({ message: 'Organization not found' });
+    }
+    const result = [];
+    //iterate through drivers array and find the driver details
+    for (let i = 0; i < organization.drivers.length; i++) {
+      const driver = await Driver.findById(organization.drivers[i]);
+      result.push(driver);
+    }
+    // console.log(result);
+    res.status(200).json({ result });
+  } catch (error) {
+    next(error);
+  }
+}
 
+exports.getEmployees = async (req, res, next) => {
+  const id = req.params.id;
+  // console.log(id);
+  try {
+    const organization = await Organization.findById(id);
+    if(!organization) {
+      return res.status(404).json({ message: 'Organization not found' });
+    }
+    const result = [];
+    //iterate through drivers array and find the driver details
+    for (let i = 0; i < organization.employees.length; i++) {
+      const employee = await User.findById(organization.employees[i]);
+      result.push(employee);
+    }
+    // console.log(result);
+    res.status(200).json({ result });
+  } catch (error) {
+    next(error);
+  }
+}

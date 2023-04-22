@@ -1,7 +1,7 @@
 import { Box, Typography, Unstable_Grid2 as Grid } from "@mui/material";
 import Join from "../components/Corporate/Join";
 // import { Logo } from "src/components/logo";
-
+import React from "react";
 
 // TODO: Change subtitle text
 

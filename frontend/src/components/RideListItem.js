@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RideInfoCard from "./UserInfoCards/RideInfoCard.js";
-
+import React from "react";
 export default function RideListItem({ props }) {
   return (
     <Accordion>
