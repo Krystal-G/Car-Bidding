@@ -14,20 +14,25 @@ const CreateOrg = () => {
 const [organizationName,setOrgName] = useState("");
 const [organizationDescription,setOrgDesc] = useState("");
 const [organizationAddress,setOrgAdd] = useState("");
+const [orgTime,setOrgTime] = useState("");
 const {createOrg} = MainState();
-const onSubmitHandler = () =>
+const onSubmitHandler = (e) =>
 {
+    e.preventDefault();
     const CurrentUser = JSON.parse(localStorage.getItem("userInfo"));
     const userId = CurrentUser.user.data.user._id;
     createOrg({
         userId:userId,
         organizationName:organizationName,
         organizationDescription:organizationAddress,
-        organizationAddress:organizationAddress
+        organizationAddress:organizationAddress,
+        orgTime:orgTime
     })
+    // console.log(orgTime);
     setOrgName("");
     setOrgDesc("");
     setOrgAdd("");
+    setOrgTime("");
 }
   return (
     <>
@@ -82,6 +87,16 @@ const onSubmitHandler = () =>
                     type="string"
                     value={organizationAddress}
                     onChange={(e) => setOrgAdd(e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    variant="filled"
+                    label="Enter Reach Time"
+                    name="orgTime"
+                    type="time"
+                    htmlFor="time-input"
+                    value={orgTime}
+                    onChange={(e) => setOrgTime(e.target.value)}
                   />
                 </Stack>
                 <Button

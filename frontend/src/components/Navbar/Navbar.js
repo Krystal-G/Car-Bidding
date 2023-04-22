@@ -13,9 +13,9 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { CurrentLoggedInUser } from "../../context/MainContext";
 
-const pages = ["Features", "Home Page", "Driver Page", "Oraganization Page"];
+
+
 const settings = [
   {
     link: "/profile",
@@ -32,6 +32,7 @@ const settings = [
 ];
 
 const NavBar = () => {
+  const user = JSON.parse(localStorage.getItem("userInfo"));
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -47,11 +48,8 @@ const NavBar = () => {
   };
 
   const handleCloseUserMenu = (e) => {
-    if(e.name==="Logout")
-    {
-      console.log(CurrentLoggedInUser);
-      CurrentLoggedInUser = null;
-      console.log(CurrentLoggedInUser);
+    if (e.name === "Logout") {
+      localStorage.clear();
     }
     setAnchorElUser(null);
   };
@@ -62,9 +60,11 @@ const NavBar = () => {
       sx={{
         backgroundColor: "#fffcf2",
         boxShadow: "none",
+        display:'flex',
+        justifyContent:'space-between'
       }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" >
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
@@ -114,11 +114,7 @@ const NavBar = () => {
                 display: { xs: "block", md: "none", mx: "auto" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -140,33 +136,13 @@ const NavBar = () => {
           >
             LOGO
           </Typography>
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              justifyContent: "center",
-            }}
-          >
-            {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu}>
-                <Box
-                  sx={{
-                    my: 2,
-                    color: "black",
-                    fontWeight: "500",
-                    fontSize: "15px",
-                  }}
-                >
-                  {page}
-                </Box>
-              </Button>
-            ))}
-          </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
+          
+           
+          
+          {user? <Box sx={{ flexGrow: 0, marginLeft: 'auto', alignItems:"flex-end" }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              <IconButton  onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar  alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -186,7 +162,7 @@ const NavBar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <Link
+                <Link 
                   href={setting.link}
                   sx={{ textDecoration: "none", color: "black" }}
                 >
@@ -199,7 +175,31 @@ const NavBar = () => {
                 </Link>
               ))}
             </Menu>
-          </Box>
+          </Box>: 
+          <Box sx={{ flexGrow: 0, marginLeft: 'auto', alignItems:"flex-end" }}>
+              <Link href="/login" sx={{textDecoration:'none'}}>
+                <Button
+                  sx={{
+                    border: 1,
+                    fontFamily: "inherit",
+                    fontWeight: "500",
+                    backgroundColor: "#8330C2",
+                    color: "white",
+                    borderRadius: "30px",
+                    width: "100px",
+                    ":hover": {
+                      backgroudColor: "white",
+                      color: "#8330C2",
+                      border: 1,
+                      borderColor: "#8330C2",
+                    },
+                  }}
+                >
+                  Login
+                </Button>
+              </Link>
+            </Box>
+          }
         </Toolbar>
       </Container>
     </AppBar>

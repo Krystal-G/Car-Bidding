@@ -14,7 +14,7 @@ import { CurrentLoggedInUser } from "../../context/MainContext";
 const user = {
   avatar: "/assets/avatars/avatar-anika-visser.png",
   name: CurrentLoggedInUser?.name,
-  timezone: "GTM-7",
+  email: CurrentLoggedInUser?.email
 };
 const AccountProfile = () => {
   return (
@@ -42,7 +42,7 @@ const AccountProfile = () => {
             {user.city} {user.country}
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            {user.timezone}
+            {user.email}
           </Typography>
         </Box>
       </CardContent>

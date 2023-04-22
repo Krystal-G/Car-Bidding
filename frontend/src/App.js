@@ -24,7 +24,7 @@ import CorporateAccountAuthForCreate from "./pages/CorporateAccountAuthForCreate
 function App() {
   // const {} = React.useContext(MainContext);
   return (
-    <Router>
+    
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/corpac" element={<CorporateAccountsLandingPage />} />
@@ -35,7 +35,7 @@ function App() {
         <Route path="/profile" element={<Profile/>}/>
         <Route path="/createorg" element={<CorporateAccountAuthForCreate/>}/>
       </Routes>
-    </Router>
+    
   );
 }
 

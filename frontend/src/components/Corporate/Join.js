@@ -11,18 +11,20 @@ import {
 } from "@mui/material";
 import { MainState } from "../../context/MainContext";
 const Join = () => {
-  const [userId,setuserId] = useState("");
   const [orgId,setOrgId] = useState("");
+  const [location,setLocation] = useState("");
   const {joinUserToOrg,joinDriverToOrg} = MainState();
-  const handleSubmitOfDriver = () => {};
   const handleSubmitOfEmployee = (e) => {
     e.preventDefault();
+    const CurrentUser = JSON.parse(localStorage.getItem("userInfo"));
+    const userId = CurrentUser.user.data.savedPassenger._id;
     joinUserToOrg({
       userId:userId,
-      orgId:orgId
+      orgId:orgId,
+      location:location
     })
-    setuserId("");
     setOrgId("");
+    setLocation("");
   };
   const [method, setMethod] = useState("driver");
   const handleMethodChange = useCallback((event, value) => {
@@ -73,12 +75,13 @@ const Join = () => {
                   <TextField
                     fullWidth
                     variant="filled"
-                    label="Employee ID"
-                    name="userId"
+                    label="Pickup Location"
+                    name="pickupLocation"
                     type="string"
-                    value={userId}
-                    onChange={(e) =>setuserId(e.target.value)}
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
                   />
+                  
                 </Stack>
                 <Button
                   fullWidth

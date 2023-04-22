@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState,useEffect, useRef } from "react";
+import React, { createContext, useContext, useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 
 const Main = createContext();
 const API = axios.create({
@@ -8,13 +10,16 @@ const API = axios.create({
 
 var tmpUser = JSON.parse(localStorage.getItem("userInfo"));
 export var CurrentLoggedInUser = {
+  id:tmpUser?.user?.data?.user?._id,
   name:tmpUser?.user?.data?.user?.name,
   phoneNo:tmpUser?.user?.data?.user?.phoneNo,
   email:tmpUser?.user?.data?.user?.email,
+  organization:tmpUser?.user?.data?.user?.organization
 };
 tmpUser = null;
 
 const MainContext = ({ children }) => {
+  const navigate = useNavigate();
   const [orgDetails, setOrgDetails] = useState({});
   const [allOrgDetails,setAllOrgDetails] = useState({});
   const [allRides, setAllRides] = useState({});
@@ -31,6 +36,7 @@ const MainContext = ({ children }) => {
       carModel: userInfo.carModel,
     });
     localStorage.setItem("userInfo", JSON.stringify({ user }));
+    navigate('/');
   };
   const signupContextForPassenger = async (userInfo) => {
     const user = await API.post("/auth/signup/user", {
@@ -40,7 +46,9 @@ const MainContext = ({ children }) => {
       aadharNo: userInfo.aadhar,
       phoneNo: userInfo.phone,
     });
+    
     localStorage.setItem("userInfo", JSON.stringify({ user }));
+    navigate('/');
     // console.log(user);
   };
   const userLogin = async (userInfo) => {
@@ -48,22 +56,27 @@ const MainContext = ({ children }) => {
       email: userInfo.email,
       password: userInfo.password,
     });
+    
     localStorage.setItem("userInfo", JSON.stringify({ user }));
     // const tmp = JSON.parse(localStorage.getItem("userInfo"));
+    navigate('/');
     console.log(CurrentLoggedInUser.name);
   };
   const joinDriverToOrg = async (userInfo) => {
     const response = await API.post("/organizations/join/driver", {
       driverId: userInfo.driverId,
-      organizationName: userInfo.orgName,
+      organizationName: userInfo.organizationName,
     });
+    navigate('/corpac');
     console.log(response);
   };
   const joinUserToOrg = async (userInfo) => {
     const response = await API.post("/organizations/join/user", {
       userId: userInfo.userId,
       orgId: userInfo.orgId,
+      location: userInfo.location
     });
+    navigate('/corpac');
   };
   const createOrg = async (formInfo) => {
     const response = await API.post("/organizations/create", {
@@ -71,12 +84,17 @@ const MainContext = ({ children }) => {
       organizationName: formInfo.organizationName,
       organizationDescription: formInfo.organizationDescription,
       organizationAddress: formInfo.organizationAddress,
+      orgTime:formInfo.orgTime
     });
+    navigate('/corpac');
   };
   const getOrgById = async () => {
     const id = CurrentLoggedInUser.organization;
+    setLoading(true);
     const response = await API.get(`/organizations/${id}`);
-    
+    setOrgDetails(response.data.organization);
+    setLoading(false);
+    // console.log(response.data.organization);
   };
   
   const getAllOrg = async () => {
@@ -87,11 +105,15 @@ const MainContext = ({ children }) => {
     // console.log(allOrgDetails);
   };
   const getRidesById = async () => {
-    const id = CurrentLoggedInUser.organization;
-    const response = await API.get(`/organizations/${id}/getRides`);
-    setAllRides(response);
+    const id = CurrentLoggedInUser.id;
+    console.log(id);
+    setLoading(true);
+    const response = await API.get(`/rides/user/${id}`);
     console.log(response);
+    setAllRides(response);
+    setLoading(false);
   };
+  
   return (
     <Main.Provider
       value={{
@@ -107,7 +129,7 @@ const MainContext = ({ children }) => {
         allOrgDetails,
         getRidesById,
         allRides,
-        loading
+        loading,
       }}
     >
       {children}

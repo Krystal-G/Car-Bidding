@@ -10,6 +10,7 @@ import {
   Divider,
   TextField,
   Unstable_Grid2 as Grid,
+  Link
 } from "@mui/material";
 import { CurrentLoggedInUser } from "../../context/MainContext";
 
@@ -103,6 +104,13 @@ const AccountProfileDetails = ({ isProfile, setIsProfile }) => {
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: "flex-end", p:2}}>
+          <Link href="/">
+          <Button sx={{
+            textDecoration:"none",
+            marginRight:"7px"
+          }} variant="contained">Home Page</Button>
+          </Link>
+          
           <Button variant="contained">Save</Button>
           <Button onClick={() => setIsProfile(false)} variant="contained">
             {isProfile ? "change password" : "Back"}
