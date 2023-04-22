@@ -5,11 +5,7 @@ const User = require('../modal/user');
 
 // Signup function for drivers
 exports.driverSignup = async (req, res) => {
-<<<<<<< HEAD
   const { name, email, password, aadharNo ,phoneNo, licensePlate, rcNo, carModel } = req.body;
-=======
-  const { name, email, password, phoneNo, licensePlate, aadharNo,rcNo, carModel } = req.body;
->>>>>>> cd05e4764a14fe6ef43a24e36ca5beb86388fcf7
 
   // Check if user with the same email exists
   const existingDriver = await Driver.findOne({ email });
@@ -75,13 +71,8 @@ exports.passengerSignup = async (req, res) => {
   // Save the passenger to the database
   try {
     const savedPassenger = await newPassenger.save();
-<<<<<<< HEAD
-    
-    console.log(2);
-=======
 
 
->>>>>>> cd05e4764a14fe6ef43a24e36ca5beb86388fcf7
     // Create JWT token
     const token = jwt.sign({ email: savedPassenger.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
 

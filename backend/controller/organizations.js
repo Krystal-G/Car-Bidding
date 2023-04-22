@@ -10,6 +10,7 @@ const {main} = require("../mapAlgo/main");
 // POST /api/organizations/join/driver
 exports.joinDriverToOrganization = async (req, res, next) => {
   const { driverId, organizationName } = req.body;
+  console.log(req.body);
   try {
     // Find organization by name
     const organization = await Organization.findOne({ name: organizationName });
@@ -49,7 +50,7 @@ exports.joinDriverToOrganization = async (req, res, next) => {
 // POST /api/organizations/join
 exports.joinUserToOrganization = async (req, res, next) => {
   const { userId, orgId, location } = req.body;
-
+  console.log(req.body);
   try {
     // Find organization by ID
     const organization = await Organization.findById(orgId);
