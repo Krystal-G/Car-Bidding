@@ -1,3 +1,5 @@
+// import * from 'react'
+import React from "react";
 import { Box, Divider, Link } from "@mui/material";
 import CarRentalIcon from "@mui/icons-material/CarRental";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";

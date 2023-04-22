@@ -3,7 +3,7 @@ import { Box, Typography, Unstable_Grid2 as Grid } from "@mui/material";
 // import { Logo } from "src/components/logo";
 import Signup from "../components/auth/Signup";
 import Login from "../components/auth/Login";
-
+import React from "react";
 // TODO: Change subtitle text
 
 const Auth = (props) => {

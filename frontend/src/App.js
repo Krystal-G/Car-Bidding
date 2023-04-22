@@ -18,21 +18,26 @@ import CorporateAccountsLandingPage from "./pages/CorporateAccounts/CorporateAcc
 import CorporateAdmin from "./pages/CorporateAdmin.js";
 import HomePage from "./pages/HomePage/HomePage.js";
 import Profile from "./pages/Profile";
+// import Page from "./admin";
+// import Page from "./pages/employeelist"
+import Page from "./pages/driverlist"
 
 function App() {
   // const {} = React.useContext(MainContext);
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/corpac" element={<CorporateAccountsLandingPage />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/corpacauth" element={<CorporateAccountAuth />} />
-        <Route path="/corpadmin" element={<CorporateAdmin />} />
-        <Route path="/userinfo" element={<UserInfo />} />
-        <Route path="/profile" element={<Profile/>}/>
-      </Routes>
-    </Router>
+    // <Employee/>
+    <Page/>
+    // <Router>
+    //   <Routes>
+    //     <Route path="/" element={<HomePage />} />
+    //     <Route path="/corpac" element={<CorporateAccountsLandingPage />} />
+    //     <Route path="/login" element={<Auth />} />
+    //     <Route path="/corpacauth" element={<CorporateAccountAuth />} />
+    //     <Route path="/corpadmin" element={<CorporateAdmin />} />
+    //     <Route path="/userinfo" element={<UserInfo />} />
+    //     <Route path="/profile" element={<Profile/>}/>
+    //   </Routes>
+    // </Router>
   );
 }
 
